@@ -1,7 +1,6 @@
 {
-  "name": "lets-talk-about---graphql",
+  "name": "lets-talk-about--template",
   "author": "Tamino Martinius",
-  "private": true,
   "scripts": {
     "start": "gulp"
   },
