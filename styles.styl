@@ -1,0 +1,206 @@
+// Variables
+
+$color-theme = #6c6;
+$color-foreground = #000;
+$color-background = #fff;
+$color-vignette = #765;
+$color-section-foreground = #fff;
+
+$random-background-image = true;
+$background-image-count = 1;
+
+// Reset
+
+html
+body
+.slides
+article
+article:before
+article:after
+  width 100%
+  height 100%
+  box-sizing border-box
+
+body
+  margin 0
+  padding 0
+  font-family Arial, Helvetica, sans-serif
+  font-weight 500
+  user-select none
+
+// Mixin
+random(min,max)
+  return floor(math(0, 'random')*(max - min + 1) + min)
+
+$background-image-count = 1
+for num in 1...$background-image-count
+  // path = "images/bg/"+ random(1,2)+".jpg"
+  path = "assets/bg/" + num + ".jpg"
+  .slides > article:nth-child({$background-image-count}n+{num})
+    &:before
+      background-image url(path)
+
+.slides
+  display table
+
+.slide-area
+  height 100vh
+  width 10vw
+  position absolute
+#prev-slide-area
+  left 0
+  &:hover
+    background linear-gradient(90deg, $color-theme 0, #fff0 10%);
+#next-slide-area
+  right 0
+  &:hover
+    background linear-gradient(270deg, $color-theme 0, #fff0 10%);
+
+// Design
+article
+  vertical-align middle
+  display none
+  &.current
+    display table-cell
+  &:before
+  &:after
+    content ''
+    display block
+    position absolute
+    top 0
+    left 0
+  &:before
+    z-index -2
+    filter grayscale(100%) contrast(160%)
+    background-size contain
+    background-repeat no-repeat
+    background-position top left
+  &:after
+    z-index -1
+    opacity 0.95
+    background-image radial-gradient(75vw, $color-background 0%, $color-background 75%, $color-vignette 100%)
+  &.plain
+    &:before, &:after
+      display none
+  &.section
+    &:after
+      background-image radial-gradient(75vw, $color-theme 0%, $color-theme 50%, $color-vignette 100%)
+    h1, h2, h3, h4, h5, h6
+      color $color-section-foreground
+  &.image
+    background-size contain
+    background-repeat no-repeat
+    background-position center center
+    &.cover
+      background-size cover
+    > *:not(:only-child)
+      position absolute
+      z-index 2
+      text-align center
+      width 100%
+      &:first-child
+        top 0
+      &:last-child
+        bottom 0
+
+.build > *
+  transition opacity 0.2s ease-in-out 0.2s
+
+.to-build
+  opacity 0
+
+h1,h2,h3,h4,h5,h6
+  text-align center
+  color $color-theme
+  text-shadow 0 0 1px #000
+  margin 1vh
+
+em
+a
+a:visited
+a:hover
+  color $color-theme
+
+h1
+  font-size 10vw
+h2
+  font-size 5vw
+h3
+  font-size 2.5vw
+
+ul
+  list-style none
+  font-size 3vw
+  line-height 2em
+  padding-left 10vw
+
+video
+img
+  width auto
+  height auto
+  max-width 80vw
+  max-height 80vh
+  display block
+  margin 0 auto
+
+
+/* Pretty printing styles. Used with prettify.js. */
+/* Vim sunburst theme by David Leibovic */
+
+.slides
+  pre.prettyprint
+    background-color #000
+    border-radius 8px
+    width 90%
+    font-size 3vw
+    margin 0 auto
+    padding 1vw 2vw
+    white-space pre-wrap
+    line-height 3.5vw
+
+    .str { color: #65B042; } /* string  - green */
+    .kwd { color: #E28964; } /* keyword - dark pink */
+    .com { color: #AEAEAE; font-style: italic; } /* comment - gray */
+    .typ { color: #89bdff; } /* type - light blue */
+    .lit { color: #3387CC; } /* literal - blue */
+    .pun { color: #fff; } /* punctuation - white */
+    .pln { color: #fff; } /* plaintext - white */
+    .tag { color: #89bdff; } /* html/xml tag    - light blue */
+    .atn { color: #bdb76b; } /* html/xml attribute name  - khaki */
+    .atv { color: #65B042; } /* html/xml attribute value - green */
+    .dec { color: #3387CC; } /* decimal - blue */
+
+  .linenums
+    ol
+      margin 0
+      padding 0
+      list-style none
+      li
+        background #000
+    &.h0 li.L0
+    &.h1 li.L1
+    &.h2 li.L2
+    &.h3 li.L3
+    &.h4 li.L4
+    &.h5 li.L5
+    &.h6 li.L6
+    &.h7 li.L7
+    &.h8 li.L8
+    &.h9 li.L9
+      background rgba($color-theme, 0.3)
+
+ul.horizontal
+  margin 0
+  padding 0
+  display flex
+  width 100%
+  h1, h2
+    line-height 2em
+  ul
+    padding 0
+  li
+    padding 1vw
+    width 100%
+    text-align center
+    font-size 7.5vh
+    line-height 1.5em

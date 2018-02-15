@@ -1,0 +1,528 @@
+doctype html
+html
+  head
+      title Lets talk about ... SQL Query Performance
+      meta(charset='utf-8')
+      script(src='assets/vendor/slides.js')
+      link(href='styles.css'  rel='stylesheet' type='text/css')
+    body
+      section.slides.layout-regular.template-default
+        article
+          h2 Lets talk about ...
+          h2 &nbsp;
+        article
+          h2 Lets talk about ...
+          h2 SQL Query Performance
+        article
+          h2 Tools
+          ul.build
+            li
+              pre
+                | rails db
+            li
+              pre
+                | EXPLAIN
+            li
+              pre
+                | ActiveRecord::Base.connection
+                |   .execute('SQL').to_a
+
+        article
+          h1 Basics
+
+        article
+          ul.build
+            li SELECT *
+            li
+              pre
+                | SELECT *
+                | FROM staff_shifts;
+            li
+              pre
+                | (cost=0.00..133081.67 rows=5852267 width=74)
+            li SELECT column
+            li
+              pre
+                | SELECT id
+                | FROM staff_shifts;
+            li
+              pre
+                | (cost=0.00..133081.67 rows=5852267 width=4)
+
+          //-
+            EXPLAIN
+            SELECT *
+            FROM staff_shifts;
+
+            EXPLAIN
+            SELECT id
+            FROM staff_shifts;
+
+        article
+          ul.build
+            li Selected columns show no difference in cost
+            li BUT it's shown in the width of a query
+            li
+              pre
+                | (5523.0ms)  SELECT * FROM staff_shifts
+            li
+              pre
+                | (783.0ms)  SELECT id FROM staff_shifts
+            li DON'T forget the parser
+
+          //-
+            ActiveRecord::Base.connection.execute('SELECT * FROM staff_shifts LIMIT 1000000').to_a; nil
+
+            ActiveRecord::Base.connection.execute('SELECT id FROM staff_shifts LIMIT 1000000').to_a; nil
+
+        article
+          h2 LIMIT
+          ul.build
+            li
+              pre
+                | SELECT *
+                | FROM staff_shifts;
+            li
+              pre
+                | (cost=0.00..133081.67 rows=5852267 width=74)
+
+        article
+          h2 LIMIT
+          ul.build
+            li
+              pre
+                | SELECT *
+                | FROM staff_shifts
+                | LIMIT 100;
+            li
+              pre
+                | (cost=0.00..2.27 rows=100 width=74)
+            li
+              pre
+                | (cost=0.00..133081.67 rows=5852267 width=74)
+          //-
+            EXPLAIN
+            SELECT *
+            FROM staff_shifts
+            LIMIT 100;
+
+        article
+          h2 Rules
+          ul
+            li 1. LIMIT results
+
+        article
+          h2 COUNT
+        article
+          h2 COUNT is expensive
+        article
+          h2 COUNT
+          ul.build
+            li
+              pre
+                | SELECT COUNT(*)
+                | FROM staff_shifts;
+            li
+              pre
+                | (cost=147712.34..147712.35 rows=1 width=0)
+            li
+              pre
+                | (1171.2ms)  SELECT count(*) FROM staff_shifts
+          //-
+            EXPLAIN
+            SELECT COUNT(*)
+            FROM staff_shifts;
+
+            ActiveRecord::Base.connection.execute('SELECT count(*) FROM staff_shifts').to_a; nil
+
+        article
+          h2 COUNT
+          ul
+            li
+              pre
+                | SELECT COUNT(id)
+                | FROM staff_shifts;
+            li
+              pre
+                | (cost=147712.34..147712.35 rows=1 width=4)
+            li
+              pre
+                | (1481.2ms)  SELECT count(id) FROM staff_shifts
+
+          //-
+            EXPLAIN
+            SELECT COUNT(id)
+            FROM staff_shifts;
+
+            ActiveRecord::Base.connection.execute('SELECT count(id) FROM staff_shifts').to_a; nil
+
+        article
+          h2 LIMIT COUNT
+          ul
+            li
+              pre
+                | SELECT COUNT(*)
+                | FROM staff_shifts
+                | LIMIT 1000;
+            li
+              pre
+                | (cost=147712.34..147712.35 rows=1 width=0)
+            li
+              pre
+                | (1171.2ms)  SELECT count(*) FROM staff_shifts
+          //-
+            EXPLAIN
+            SELECT COUNT(*)
+            FROM staff_shifts
+            LIMIT 1000;
+
+            ActiveRecord::Base.connection.execute('SELECT count(id) FROM staff_shifts').to_a; nil
+
+        article.image(data-src="assets/memes/fuuuuu.jpg")
+
+        article
+          h2 LIMIT COUNT (done right)
+          ul
+            li
+              pre
+                | SELECT COUNT(*) FROM (
+                |   SELECT id
+                |   FROM staff_shifts
+                |   LIMIT 1000
+                | );
+            li
+              pre
+                | (cost=35.24..35.25 rows=1 width=0)
+            li
+              pre
+                | (7.0ms)  SELECT count(*) FROM ...
+          //-
+            EXPLAIN
+            SELECT COUNT(*) FROM (
+              SELECT id
+              FROM staff_shifts
+              LIMIT 1000
+            ) AS subquery;
+
+            ActiveRecord::Base.connection.execute('SELECT count(*) FROM (SELECT id FROM staff_shifts LIMIT 100000) AS subquery').to_a; nil
+
+        article
+          h2 LIMIT COUNT (done perfect)
+          ul
+            li
+              pre
+                | SELECT COUNT(*) FROM (
+                |   SELECT 1
+                |   FROM staff_shifts
+                |   LIMIT 1000
+                | );
+            li
+              pre
+                | (cost=35.24..35.25 rows=1 width=0)
+            li
+              pre
+                | (6.3ms)  SELECT count(*) FROM ...
+          //-
+            EXPLAIN
+            SELECT COUNT(*) FROM (
+              SELECT 1
+              FROM staff_shifts
+              LIMIT 1000
+            ) AS subquery;
+
+            ActiveRecord::Base.connection.execute('SELECT count(1) FROM (SELECT id FROM staff_shifts LIMIT 100000) AS subquery').to_a; nil
+
+        article
+          h2 Rules
+          ul
+            li 1. LIMIT results
+            li 2. LIMIT counts
+
+        article
+          h2 ORDER
+          ul.build
+            li
+              pre
+                | SELECT id
+                | FROM staff_shifts
+                | ORDER BY created_at;
+            li
+              pre
+                | (cost=990924.99..1005555.66 rows=5852267 width=12)
+
+          //-
+            EXPLAIN
+            SELECT id
+            FROM staff_shifts
+            ORDER BY created_at;
+
+        article
+          h2 ORDER LIMIT
+          ul.build
+            li
+              pre
+                | SELECT *
+                | FROM staff_shifts
+                | ORDER BY created_at
+                | LIMIT 100;
+            li
+              pre
+                | (cost=356751.11..356751.36 rows=100 width=12)
+            li
+              pre
+                | (cost=990924.99..1005555.66 rows=5852267 width=12)
+
+          //-
+            EXPLAIN
+            SELECT id
+            FROM staff_shifts
+            ORDER BY created_at
+            LIMIT 100;
+
+        article
+          h2 indexed ORDER
+          ul.build
+            li
+              pre
+                | SELECT *
+                | FROM staff_shifts
+                | ORDER BY created_at
+                | LIMIT 100;
+            li
+              pre
+                | (cost=0.43..5.37 rows=100 width=12)
+            li
+              pre
+                | (cost=990924.99..1005555.66 rows=5852267 width=12)
+
+          //-
+            CREATE INDEX staff_shifts__created_at ON staff_shifts (created_at);
+
+            DROP INDEX staff_shifts__created_at;
+
+            EXPLAIN
+            SELECT id
+            FROM staff_shifts
+            ORDER BY created_at
+            LIMIT 100;
+
+        article
+          h2 Rules
+          ul
+            li 1. LIMIT results
+            li 2. LIMIT counts
+            li 3. INDEX sort columns
+
+        article
+          h2 INDEXES
+          ul.build
+            li
+              pre
+                | SELECT id
+                | FROM shiftplan_notifications
+                | WHERE shift_id = ?;
+            li
+              pre
+                | (cost=0.00..60555.66 rows=4 width=4)
+
+          //-
+            EXPLAIN
+            SELECT id
+            FROM shiftplan_notifications
+            WHERE shift_id = 429705;
+
+        article
+          h2 INDEXES
+          ul.build
+            li
+              pre
+                | CREATE INDEX shiftplan_notifications__shift_id
+                | ON shiftplan_notifications (shift_id);
+
+          //-
+            CREATE INDEX shiftplan_notifications__shift_id ON shiftplan_notifications (shift_id);
+            DROP INDEX shiftplan_notifications__shift_id;
+
+        article
+          h2 INDEXES
+          ul.build
+            li
+              pre
+                | SELECT id
+                | FROM shiftplan_notifications
+                | WHERE shift_id = ?;
+            li
+              pre
+                | (cost=0.43..10.82 rows=4 width=4)
+            li
+              pre
+                | (cost=0.00..60555.66 rows=4 width=4)
+
+          //-
+            EXPLAIN
+            SELECT id
+            FROM shiftplan_notifications
+            WHERE shift_id = 429705;
+
+        article
+          h2 Rules
+          ul
+            li 1. LIMIT results
+            li 2. LIMIT counts
+            li 3. INDEX sort columns
+            li 4. INDEX filter columns
+
+        article
+          h2 INDEXES
+          ul.build
+            li
+              pre
+                | SELECT id
+                | FROM shiftplan_notifications
+                | WHERE employment_ids @> ARRAY[?];
+            li
+              pre
+                | (cost=0.00..60555.66 rows=159 width=4)
+
+          //-
+            EXPLAIN
+            SELECT id
+            FROM shiftplan_notifications
+            WHERE employment_ids @> ARRAY[1264];
+
+        article
+          h2 INDEXES
+          ul.build
+            li
+              pre
+                | CREATE INDEX shiftplan_notifications__employment_ids
+                | ON shiftplan_notifications (employment_ids);
+
+          //-
+            CREATE INDEX shiftplan_notifications__employment_ids ON shiftplan_notifications (employment_ids);
+            DROP INDEX shiftplan_notifications__employment_ids;
+
+
+        article
+          h2 INDEXES
+          ul.build
+            li
+              pre
+                | SELECT id
+                | FROM shiftplan_notifications
+                | WHERE shift_id = ?;
+            li
+              pre
+                | (cost=0.00..60555.66 rows=159 width=4)
+            li
+              pre
+                | (cost=0.00..60555.66 rows=159 width=4)
+
+        article.image(data-src="assets/memes/fuuuuu.jpg")
+
+        article
+          h2 INDEXES
+          ul.build
+            li
+              pre
+                | CREATE INDEX shiftplan_notifications__employment_ids
+                | ON shiftplan_notifications
+                | USING GIN (employment_ids);
+
+          //-
+            CREATE INDEX shiftplan_notifications__employment_ids ON shiftplan_notifications USING GIN (employment_ids);
+            DROP INDEX shiftplan_notifications__employment_ids;
+
+
+        article
+          h2 INDEXES
+          ul.build
+            li
+              pre
+                | SELECT id
+                | FROM shiftplan_notifications
+                | WHERE shift_id = ?;
+            li
+              pre
+                | (cost=17.23..623.83 rows=159 width=4)
+            li
+              pre
+                | (cost=0.00..60555.66 rows=159 width=4)
+
+          //-
+            EXPLAIN
+            SELECT id
+            FROM shiftplan_notifications
+            WHERE employment_ids @> ARRAY[1264]
+
+        article
+          h2 Rules
+          ul
+            li 1. LIMIT results
+            li 2. LIMIT counts
+            li 3. INDEX sort columns
+            li 4. INDEX filter columns (with the right index)
+
+        article
+          h1 JOINs
+          h2 &nbsp;
+
+        article
+          h1 JOINs
+          h2 are BAD
+
+        article
+          h1 JOINs
+          h2 are BAD (sometimes)
+
+        article
+          h1 JOINs
+          h2 are BAD <strike>(sometimes)</strike> mostly
+
+        article
+          h2 When to use JOIN
+          ul.build
+            li ALL where filter columns are in the base table
+            li ALL ORDER BY columns are in the base table
+            li ALL joined tables have a 1:n relation to the base table
+
+        article
+          h2 How to handle filter columns
+          ul.build
+            li Fetch ids and filter in base table
+            li EXCEPTION:
+              ul.build
+                li Amount of plucked ids is usually HUGE
+
+        article
+          h2 How to handle order columns
+          ul.build
+            li Create persistent views
+            li Create cached tables
+
+        article
+          h2 How to handle n:m relations
+          ul.build
+            li Fetch data from base table
+            li Fetch data from join tables seperately
+            li Link them logically in code
+          //-
+            Employment.joins(:user).where(first_name: 'Tamino').to_a; nil
+            Employment.where(user_id: User.where(first_name: 'Tamino').pluck(:id)).to_a; nil
+
+            Employment.joins(:user).where('employments.id = ?', 193681).to_a; nil
+            Employment.includes(:user).where('employments.id= ?', 193681).to_a; nil
+
+            Employment.joins(:user).where('employments.id > ?', 1000).to_a; nil
+            Employment.includes(:user).where('employments.id > ?', 1000).to_a; nil
+
+        article
+          h2 Rules
+          ul
+            li 1. LIMIT results
+            li 2. LIMIT counts
+            li 3. INDEX sort columns
+            li 4. INDEX filter columns (with the right index)
+            li 5. Avoid JOINs (if possible)
+
+      script(src='assets/scripts/main.js')
