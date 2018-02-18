@@ -10,7 +10,7 @@
   URL: http://code.google.com/p/html5slides/
 */
 
-var PERMANENT_URL_PREFIX = 'assets/vendor/';
+window.PERMANENT_URL_PREFIX = window.PERMANENT_URL_PREFIX || 'assets/vendor/';
 
 let SLIDE_CLASSES = ['far-past', 'past', 'current', 'next', 'far-next'];
 
@@ -518,7 +518,7 @@ function addPrettify() {
 
   var el = document.createElement('script');
   el.type = 'text/javascript';
-  el.src = `${PERMANENT_URL_PREFIX  }prettify.js`;
+  el.src = `${PERMANENT_URL_PREFIX}prettify.js`;
   el.onload = function() {
     // prettyPrint(); don't need it!
   };
