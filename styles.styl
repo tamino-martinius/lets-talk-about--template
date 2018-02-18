@@ -1,13 +1,23 @@
 // Variables
 
-$color-theme = #6c6;
-$color-foreground = #000;
-$color-background = #fff;
-$color-vignette = #765;
-$color-section-foreground = #fff;
+:root {
+  --color-theme: #6c6;
+  --color-foreground: #000;
+  --color-background: #fff;
+  --color-vignette: #765;
+  --color-section-foreground: #fff;
+}
 
-$random-background-image = true;
-$background-image-count = 1;
+if $random-background-image
+  $local-random-background-image = false;
+else
+  $local-random-background-image = true;
+
+if $background-image-count
+  $local-background-image-count = 1;
+else
+  $local-background-image-count = $background-image-count;
+
 
 // Reset
 
@@ -32,11 +42,10 @@ body
 random(min,max)
   return floor(math(0, 'random')*(max - min + 1) + min)
 
-$background-image-count = 1
-for num in 1...$background-image-count
+for num in 1...$local-background-image-count
   // path = "images/bg/"+ random(1,2)+".jpg"
   path = "assets/bg/" + num + ".jpg"
-  .slides > article:nth-child({$background-image-count}n+{num})
+  .slides > article:nth-child({$local-background-image-count}n+{num})
     &:before
       background-image url(path)
 
@@ -50,11 +59,11 @@ for num in 1...$background-image-count
 #prev-slide-area
   left 0
   &:hover
-    background linear-gradient(90deg, $color-theme 0, #fff0 10%);
+    background linear-gradient(90deg, var(--color-theme) 0, #fff0 10%);
 #next-slide-area
   right 0
   &:hover
-    background linear-gradient(270deg, $color-theme 0, #fff0 10%);
+    background linear-gradient(270deg, var(--color-theme) 0, #fff0 10%);
 
 // Design
 article
@@ -78,15 +87,15 @@ article
   &:after
     z-index -1
     opacity 0.95
-    background-image radial-gradient(75vw, $color-background 0%, $color-background 75%, $color-vignette 100%)
+    background-image radial-gradient(75vw, var(--color-background) 0%, var(--color-background) 75%, var(--color-vignette) 100%)
   &.plain
     &:before, &:after
       display none
   &.section
     &:after
-      background-image radial-gradient(75vw, $color-theme 0%, $color-theme 50%, $color-vignette 100%)
+      background-image radial-gradient(75vw, var(--color-theme) 0%, var(--color-theme) 50%, var(--color-vignette) 100%)
     h1, h2, h3, h4, h5, h6
-      color $color-section-foreground
+      color var(--color-section-foreground)
   &.image
     background-size contain
     background-repeat no-repeat
@@ -111,7 +120,7 @@ article
 
 h1,h2,h3,h4,h5,h6
   text-align center
-  color $color-theme
+  color var(--color-theme)
   text-shadow 0 0 1px #000
   margin 1vh
 
@@ -119,7 +128,7 @@ em
 a
 a:visited
 a:hover
-  color $color-theme
+  color var(--color-theme)
 
 h1
   font-size 10vw
@@ -187,7 +196,7 @@ img
     &.h7 li.L7
     &.h8 li.L8
     &.h9 li.L9
-      background rgba($color-theme, 0.3)
+      background #6c66
 
 ul.horizontal
   margin 0
