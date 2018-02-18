@@ -6,33 +6,34 @@ var reload = browserSync.reload;
 
 // Start the server
 gulp.task('browser-sync', function() {
-    browserSync({
-        open : true,
-        server: {
-            baseDir: "./"
-        }
-    });
+  browserSync({
+    open : true,
+    server: {
+      baseDir: "./"
+    }
+  });
 });
 
 gulp.task('slides',function () {
-  gulp.src('index.jade')
+  gulp.src('index.pug')
     .pipe(p.plumber())
-    .pipe(p.jade())
+    .pipe(p.pug())
     .pipe(gulp.dest('./'))
     .pipe(reload({stream:true}))
+  ;
 });
 
 
 gulp.task('styles',function() {
-  gulp.src('./styles.styl')
+  gulp.src('*.styl')
     .pipe(p.stylus())
     .pipe(p.autoprefixer())
     .pipe(gulp.dest('./'))
     .pipe(reload({stream:true}))
+  ;
 });
 
-
-gulp.task('default', ['slides','styles','browser-sync'] ,function() {
-  gulp.watch('./**/*.jade',['slides']);
+module.exports = gulp.task('default', ['slides','styles','browser-sync'] ,function() {
+  gulp.watch('./**/*.pug',['slides']);
   gulp.watch('./**/*.styl',['styles']);
 });
