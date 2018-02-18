@@ -1,0 +1,55 @@
+doctype html
+html
+  head
+    title Lets talk about ... Template
+    meta(charset='utf-8')
+    script(src='assets/vendor/slides.js')
+    link(href='styles.css'  rel='stylesheet' type='text/css')
+  body
+    section.slides.layout-regular.template-default
+      article
+        h1 H1
+        h2 H2
+      article.image(data-src="assets/memes/philosoraptor.jpg")
+        h1 Background Image
+      article.image.cover(data-src="assets/memes/philosoraptor.jpg")
+        h1 Cover Image
+      article
+        ul
+          li Inline Image
+          li
+            img(src="assets/memes/like-a-boss.jpg")
+      article
+        h2 List
+        ul.build
+          li 1.
+          li 2.
+          li 3.
+          li 4.
+      article
+        h2 Code
+        pre
+          | const code = 'without line numbers';
+        pre.linenums
+          | const code = 'with line numbers';
+      article
+        h2 Code with highlights
+        pre.linenums.h1
+          | const line1 = 'normal'
+          | const line2 = 'highlight'
+          | const line3 = 'normal'
+      article.section
+        h1 New Section
+      article
+        ul
+          li
+            em Emphasis
+          li
+            i Italic
+          li Inline <em>Emphasis</em> and <i>Italic</i>
+          li
+            a(href="#") Link
+      article
+        video(src="#" loop controls)
+
+    script(src='assets/scripts/main.js')
