@@ -12,10 +12,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "browser-sync": "^2.23.6",
     "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^4.1.0",
-    "gulp-pug": "^3.3.0",
+    "browser-sync": "^2.24.5",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-pug": "^4.0.1",
     "gulp-load-plugins": "^1.5.0",
     "gulp-plumber": "^1.2.0",
     "gulp-stylus": "^2.7.0"
