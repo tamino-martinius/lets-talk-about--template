@@ -1,4 +1,5 @@
 #!/usr/bin/env node
 
-var gulp = require('../gulpfile');
-gulp.start('default');
+const gulp = require('gulp');
+require('../gulpfile');
+gulp.task('default')();
