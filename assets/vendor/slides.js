@@ -24,73 +24,73 @@ let curSlide;
 
 if (typeof document !== 'undefined' && !('classList' in document.createElement('a'))) {
 
-  (function(view) {
+  (function (view) {
     let classListProp = 'classList',
       protoProp = 'prototype',
       elemCtrProto = (view.HTMLElement || view.Element)[protoProp],
       objCtr = Object;
     (strTrim =
       String[protoProp].trim ||
-      function() {
+      function () {
         return this.replace(/^\s+|\s+$/g, '');
       }),
-      (arrIndexOf =
-        Array[protoProp].indexOf ||
-        function(item) {
-          for (let i = 0, len = this.length; i < len; i++) {
-            if (i in this && this[i] === item) {
-              return i;
-            }
+    (arrIndexOf =
+      Array[protoProp].indexOf ||
+      function (item) {
+        for (let i = 0, len = this.length; i < len; i++) {
+          if (i in this && this[i] === item) {
+            return i;
           }
-          return -1;
-        }),
-      // Vendors: please allow content code to instantiate DOMExceptions
-      (DOMEx = function(type, message) {
-        this.name = type;
-        this.code = DOMException[type];
-        this.message = message;
-      }),
-      (checkTokenAndGetIndex = function(classList, token) {
-        if (token === '') {
-          throw new DOMEx('SYNTAX_ERR', 'An invalid or illegal string was specified');
         }
-        if (/\s/.test(token)) {
-          throw new DOMEx('INVALID_CHARACTER_ERR', 'String contains an invalid character');
-        }
-        return arrIndexOf.call(classList, token);
+        return -1;
       }),
-      (ClassList = function(elem) {
-        let trimmedClasses = strTrim.call(elem.className),
-          classes = trimmedClasses ? trimmedClasses.split(/\s+/) : [];
-        for (let i = 0, len = classes.length; i < len; i++) {
-          this.push(classes[i]);
-        }
-        this._updateClassName = function() {
-          elem.className = this.toString();
-        };
-      }),
-      (classListProto = ClassList[protoProp] = []),
-      (classListGetter = function() {
-        return new ClassList(this);
-      });
+    // Vendors: please allow content code to instantiate DOMExceptions
+    (DOMEx = function (type, message) {
+      this.name = type;
+      this.code = DOMException[type];
+      this.message = message;
+    }),
+    (checkTokenAndGetIndex = function (classList, token) {
+      if (token === '') {
+        throw new DOMEx('SYNTAX_ERR', 'An invalid or illegal string was specified');
+      }
+      if (/\s/.test(token)) {
+        throw new DOMEx('INVALID_CHARACTER_ERR', 'String contains an invalid character');
+      }
+      return arrIndexOf.call(classList, token);
+    }),
+    (ClassList = function (elem) {
+      let trimmedClasses = strTrim.call(elem.className),
+        classes = trimmedClasses ? trimmedClasses.split(/\s+/) : [];
+      for (let i = 0, len = classes.length; i < len; i++) {
+        this.push(classes[i]);
+      }
+      this._updateClassName = function () {
+        elem.className = this.toString();
+      };
+    }),
+    (classListProto = ClassList[protoProp] = []),
+    (classListGetter = function () {
+      return new ClassList(this);
+    });
     // Most DOMException implementations don't allow calling DOMException's toString()
     // on non-DOMExceptions. Error's toString() is sufficient here.
     DOMEx[protoProp] = Error[protoProp];
-    classListProto.item = function(i) {
+    classListProto.item = function (i) {
       return this[i] || null;
     };
-    classListProto.contains = function(token) {
+    classListProto.contains = function (token) {
       token += '';
       return checkTokenAndGetIndex(this, token) !== -1;
     };
-    classListProto.add = function(token) {
+    classListProto.add = function (token) {
       token += '';
       if (checkTokenAndGetIndex(this, token) === -1) {
         this.push(token);
         this._updateClassName();
       }
     };
-    classListProto.remove = function(token) {
+    classListProto.remove = function (token) {
       token += '';
       let index = checkTokenAndGetIndex(this, token);
       if (index !== -1) {
@@ -98,7 +98,7 @@ if (typeof document !== 'undefined' && !('classList' in document.createElement('
         this._updateClassName();
       }
     };
-    classListProto.toggle = function(token) {
+    classListProto.toggle = function (token) {
       token += '';
       if (checkTokenAndGetIndex(this, token) === -1) {
         this.add(token);
@@ -106,7 +106,7 @@ if (typeof document !== 'undefined' && !('classList' in document.createElement('
         this.remove(token);
       }
     };
-    classListProto.toString = function() {
+    classListProto.toString = function () {
       return this.join(' ');
     };
 
@@ -137,9 +137,9 @@ if (typeof document !== 'undefined' && !('classList' in document.createElement('
 function getSlideEl(no) {
   if ((no < 0) || (no >= slideEls.length)) {
     return null;
-  } 
-    return slideEls[no];
-  
+  }
+  return slideEls[no];
+
 }
 
 function updateSlideClass(slideNo, className) {
@@ -325,7 +325,8 @@ function disableSlideFrames(no) {
   }
 
   let frames = el.getElementsByTagName('iframe');
-  for (var i = 0, frame; (frame = frames[i]); i++) {
+  for (var i = 0, frame;
+    (frame = frames[i]); i++) {
     disableFrame(frame);
   }
 }
@@ -337,7 +338,8 @@ function enableSlideFrames(no) {
   }
 
   let frames = el.getElementsByTagName('iframe');
-  for (var i = 0, frame; (frame = frames[i]); i++) {
+  for (var i = 0, frame;
+    (frame = frames[i]); i++) {
     enableFrame(frame);
   }
 }
@@ -356,7 +358,8 @@ function enableFrame(frame) {
 
 function setupFrames() {
   let frames = document.querySelectorAll('iframe');
-  for (var i = 0, frame; (frame = frames[i]); i++) {
+  for (var i = 0, frame;
+    (frame = frames[i]); i++) {
     frame._src = frame.src;
     disableFrame(frame);
   }
@@ -391,9 +394,9 @@ function setupInteraction() {
 function isChromeVoxActive() {
   if (typeof (cvox) == 'undefined') {
     return false;
-  } 
-    return true;
-  
+  }
+  return true;
+
 }
 
 function speakAndSyncToNode(node) {
@@ -510,7 +513,8 @@ function addEventListeners() {
 
 function addPrettify() {
   let els = document.querySelectorAll('pre');
-  for (var i = 0, el; (el = els[i]); i++) {
+  for (var i = 0, el;
+    (el = els[i]); i++) {
     if (!el.classList.contains('noprettyprint')) {
       el.classList.add('prettyprint');
     }
@@ -519,7 +523,7 @@ function addPrettify() {
   var el = document.createElement('script');
   el.type = 'text/javascript';
   el.src = `${PERMANENT_URL_PREFIX}prettify.js`;
-  el.onload = function() {
+  el.onload = function () {
     // prettyPrint(); don't need it!
   };
   document.body.appendChild(el);
@@ -607,7 +611,7 @@ function initialize() {
 if (!window._DEBUG && document.location.href.indexOf('?debug') !== -1) {
   document.addEventListener(
     'DOMContentLoaded',
-    function() {
+    function () {
       // Avoid missing the DomContentLoaded event
       window['_DCL'] = true;
     },
