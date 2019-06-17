@@ -555,9 +555,15 @@ function addGeneralStyle() {
 }
 
 function makeBuildLists() {
-  for (var i = curSlide, slide; (slide = slideEls[i]); i++) {
-    let items = slide.querySelectorAll('.build > *');
-    for (var j = 0, item; (item = items[j]); j++) {
+  for (var i = curSlide, slide;
+    (slide = slideEls[i]); i++) {
+    let selector = '.build > *';
+    if (slide.classList.contains('build')) {
+      selector += ':not(:first-child)'
+    }
+    let items = slide.querySelectorAll(selector);
+    for (var j = 0, item;
+      (item = items[j]); j++) {
       if (item.classList) {
         item.classList.add('to-build');
       }
