@@ -181,6 +181,9 @@ img {
 /* html/xml attribute value - green */
 /* decimal - blue */
 }
+.slides pre.prettyprint.compact {
+  line-height: 3vw;
+}
 .slides pre.prettyprint .str {
   color: #65b042;
 }
