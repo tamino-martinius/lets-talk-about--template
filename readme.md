@@ -22,4 +22,5 @@ There are two options to build this with your own slides
 
 ## Preview
 
-[Demo Slides](http://tamino-martinius.github.io/lets-talk-about--template)
+[Demo Slides](https://template.lets-talk-about.tamino.dev
+)
