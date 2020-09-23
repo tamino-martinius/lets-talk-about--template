@@ -8,16 +8,14 @@
     "build-slides": "./bin/build-slides.js"
   },
   "scripts": {
-    "start": "gulp"
+    "start": "parcel index.pug assets",
+    "build": "parcel build --no-source-maps index.pug assets",
+    "postbuild": "cp dist/styles.*.css styles.css"
   },
   "license": "MIT",
-  "dependencies": {
-    "browser-sync": "^2.24.5",
-    "gulp": "^4.0.0",
-    "gulp-autoprefixer": "^5.0.0",
-    "gulp-pug": "^4.0.1",
-    "gulp-load-plugins": "^1.5.0",
-    "gulp-plumber": "^1.2.0",
-    "gulp-stylus": "^2.7.0"
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "pug": "^3.0.0",
+    "stylus": "^0.54.8"
   }
 }
