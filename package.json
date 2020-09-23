@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "parcel index.pug assets",
-    "build": "parcel build --no-source-maps index.pug assets",
+    "prebuild": "rm -rf dist",
+    "build": "parcel build --no-source-maps index.pug 'assets/**/*'",
     "postbuild": "cp dist/styles.*.css styles.css"
   },
   "license": "MIT",

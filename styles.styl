@@ -42,12 +42,9 @@ body
 random(min,max)
   return floor(math(0, 'random')*(max - min + 1) + min)
 
-for num in 1...$local-background-image-count
-  // path = "images/bg/"+ random(1,2)+".jpg"
-  path = "assets/bg/" + num + ".jpg"
-  .slides > article:nth-child({$local-background-image-count}n+{num})
-    &:before
-      background-image url(path)
+.slides > article
+  &:before
+    background-image url('/assets/bg/1.jpg')
 
 .slides
   display table
