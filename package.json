@@ -4,9 +4,6 @@
   "description": "Template for slides build with HTML and CSS.",
   "author": "Tamino Martinius",
   "homepage": "https://github.com/tamino-martinius/lets-talk-about--template",
-  "bin": {
-    "build-slides": "./bin/build-slides.js"
-  },
   "scripts": {
     "start": "parcel index.pug assets",
     "build": "parcel build --no-source-maps index.pug 'assets/**/*'",
