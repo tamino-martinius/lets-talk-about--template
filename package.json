@@ -6,7 +6,7 @@
   "homepage": "https://github.com/tamino-martinius/lets-talk-about--template",
   "scripts": {
     "start": "parcel index.pug",
-    "prebuild": "find dist ! -name 'CNAME' -type f -exec rm -f {} +",
+    "prebuild": "find dist ! -name 'CNAME' -type f -exec rm -f {} + || true",
     "build": "parcel build index.pug",
     "deploy": "git subtree push --prefix dist origin gh-pages"
   },
