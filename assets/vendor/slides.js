@@ -10,8 +10,6 @@
   URL: http://code.google.com/p/html5slides/
 */
 
-window.PERMANENT_URL_PREFIX = window.PERMANENT_URL_PREFIX || 'assets/vendor/';
-
 let SLIDE_CLASSES = ['far-past', 'past', 'current', 'next', 'far-next'];
 
 let PM_TOUCH_SENSITIVITY = 15;
@@ -23,7 +21,6 @@ let curSlide;
  * (http://purl.eligrey.com/github/classList.js/blob/master/classList.js) */
 
 if (typeof document !== 'undefined' && !('classList' in document.createElement('a'))) {
-
   (function (view) {
     let classListProp = 'classList',
       protoProp = 'prototype',
@@ -34,45 +31,45 @@ if (typeof document !== 'undefined' && !('classList' in document.createElement('
       function () {
         return this.replace(/^\s+|\s+$/g, '');
       }),
-    (arrIndexOf =
-      Array[protoProp].indexOf ||
-      function (item) {
-        for (let i = 0, len = this.length; i < len; i++) {
-          if (i in this && this[i] === item) {
-            return i;
+      (arrIndexOf =
+        Array[protoProp].indexOf ||
+        function (item) {
+          for (let i = 0, len = this.length; i < len; i++) {
+            if (i in this && this[i] === item) {
+              return i;
+            }
           }
-        }
-        return -1;
+          return -1;
+        }),
+      // Vendors: please allow content code to instantiate DOMExceptions
+      (DOMEx = function (type, message) {
+        this.name = type;
+        this.code = DOMException[type];
+        this.message = message;
       }),
-    // Vendors: please allow content code to instantiate DOMExceptions
-    (DOMEx = function (type, message) {
-      this.name = type;
-      this.code = DOMException[type];
-      this.message = message;
-    }),
-    (checkTokenAndGetIndex = function (classList, token) {
-      if (token === '') {
-        throw new DOMEx('SYNTAX_ERR', 'An invalid or illegal string was specified');
-      }
-      if (/\s/.test(token)) {
-        throw new DOMEx('INVALID_CHARACTER_ERR', 'String contains an invalid character');
-      }
-      return arrIndexOf.call(classList, token);
-    }),
-    (ClassList = function (elem) {
-      let trimmedClasses = strTrim.call(elem.className),
-        classes = trimmedClasses ? trimmedClasses.split(/\s+/) : [];
-      for (let i = 0, len = classes.length; i < len; i++) {
-        this.push(classes[i]);
-      }
-      this._updateClassName = function () {
-        elem.className = this.toString();
-      };
-    }),
-    (classListProto = ClassList[protoProp] = []),
-    (classListGetter = function () {
-      return new ClassList(this);
-    });
+      (checkTokenAndGetIndex = function (classList, token) {
+        if (token === '') {
+          throw new DOMEx('SYNTAX_ERR', 'An invalid or illegal string was specified');
+        }
+        if (/\s/.test(token)) {
+          throw new DOMEx('INVALID_CHARACTER_ERR', 'String contains an invalid character');
+        }
+        return arrIndexOf.call(classList, token);
+      }),
+      (ClassList = function (elem) {
+        let trimmedClasses = strTrim.call(elem.className),
+          classes = trimmedClasses ? trimmedClasses.split(/\s+/) : [];
+        for (let i = 0, len = classes.length; i < len; i++) {
+          this.push(classes[i]);
+        }
+        this._updateClassName = function () {
+          elem.className = this.toString();
+        };
+      }),
+      (classListProto = ClassList[protoProp] = []),
+      (classListGetter = function () {
+        return new ClassList(this);
+      });
     // Most DOMException implementations don't allow calling DOMException's toString()
     // on non-DOMExceptions. Error's toString() is sufficient here.
     DOMEx[protoProp] = Error[protoProp];
@@ -135,11 +132,10 @@ if (typeof document !== 'undefined' && !('classList' in document.createElement('
 /* Slide movement */
 
 function getSlideEl(no) {
-  if ((no < 0) || (no >= slideEls.length)) {
+  if (no < 0 || no >= slideEls.length) {
     return null;
   }
   return slideEls[no];
-
 }
 
 function updateSlideClass(slideNo, className) {
@@ -300,7 +296,7 @@ function handleTouchEnd(event) {
   let dx = Math.abs(touchDX);
   let dy = Math.abs(touchDY);
 
-  if (dx > PM_TOUCH_SENSITIVITY && dy < dx * 2 / 3) {
+  if (dx > PM_TOUCH_SENSITIVITY && dy < (dx * 2) / 3) {
     if (touchDX > 0) {
       prevSlide();
     } else {
@@ -325,8 +321,7 @@ function disableSlideFrames(no) {
   }
 
   let frames = el.getElementsByTagName('iframe');
-  for (var i = 0, frame;
-    (frame = frames[i]); i++) {
+  for (var i = 0, frame; (frame = frames[i]); i++) {
     disableFrame(frame);
   }
 }
@@ -338,8 +333,7 @@ function enableSlideFrames(no) {
   }
 
   let frames = el.getElementsByTagName('iframe');
-  for (var i = 0, frame;
-    (frame = frames[i]); i++) {
+  for (var i = 0, frame; (frame = frames[i]); i++) {
     enableFrame(frame);
   }
 }
@@ -358,8 +352,7 @@ function enableFrame(frame) {
 
 function setupFrames() {
   let frames = document.querySelectorAll('iframe');
-  for (var i = 0, frame;
-    (frame = frames[i]); i++) {
+  for (var i = 0, frame; (frame = frames[i]); i++) {
     frame._src = frame.src;
     disableFrame(frame);
   }
@@ -392,11 +385,10 @@ function setupInteraction() {
 /* ChromeVox support */
 
 function isChromeVoxActive() {
-  if (typeof (cvox) == 'undefined') {
+  if (typeof cvox == 'undefined') {
     return false;
   }
   return true;
-
 }
 
 function speakAndSyncToNode(node) {
@@ -404,7 +396,11 @@ function speakAndSyncToNode(node) {
     return;
   }
 
-  cvox.ChromeVox.navigationManager.switchToStrategy(cvox.ChromeVoxNavigationManager.STRATEGIES.LINEARDOM, 0, true);
+  cvox.ChromeVox.navigationManager.switchToStrategy(
+    cvox.ChromeVoxNavigationManager.STRATEGIES.LINEARDOM,
+    0,
+    true,
+  );
   cvox.ChromeVox.navigationManager.syncToNode(node);
   cvox.ChromeVoxUserCommands.finishNavCommand('');
   let target = node;
@@ -419,9 +415,18 @@ function speakNextItem() {
     return;
   }
 
-  cvox.ChromeVox.navigationManager.switchToStrategy(cvox.ChromeVoxNavigationManager.STRATEGIES.LINEARDOM, 0, true);
+  cvox.ChromeVox.navigationManager.switchToStrategy(
+    cvox.ChromeVoxNavigationManager.STRATEGIES.LINEARDOM,
+    0,
+    true,
+  );
   cvox.ChromeVox.navigationManager.next(true);
-  if (!cvox.DomUtil.isDescendantOfNode(cvox.ChromeVox.navigationManager.getCurrentNode(), slideEls[curSlide])) {
+  if (
+    !cvox.DomUtil.isDescendantOfNode(
+      cvox.ChromeVox.navigationManager.getCurrentNode(),
+      slideEls[curSlide],
+    )
+  ) {
     let target = slideEls[curSlide];
     while (target.firstChild) {
       target = target.firstChild;
@@ -437,9 +442,18 @@ function speakPrevItem() {
     return;
   }
 
-  cvox.ChromeVox.navigationManager.switchToStrategy(cvox.ChromeVoxNavigationManager.STRATEGIES.LINEARDOM, 0, true);
+  cvox.ChromeVox.navigationManager.switchToStrategy(
+    cvox.ChromeVoxNavigationManager.STRATEGIES.LINEARDOM,
+    0,
+    true,
+  );
   cvox.ChromeVox.navigationManager.previous(true);
-  if (!cvox.DomUtil.isDescendantOfNode(cvox.ChromeVox.navigationManager.getCurrentNode(), slideEls[curSlide])) {
+  if (
+    !cvox.DomUtil.isDescendantOfNode(
+      cvox.ChromeVox.navigationManager.getCurrentNode(),
+      slideEls[curSlide],
+    )
+  ) {
     let target = slideEls[curSlide];
     while (target.lastChild) {
       target = target.lastChild;
@@ -463,7 +477,7 @@ function getCurSlideFromHash() {
 }
 
 function updateHash() {
-  location.replace(`#${  curSlide + 1}`);
+  location.replace(`#${curSlide + 1}`);
 }
 
 /* Event listeners */
@@ -507,44 +521,25 @@ function handleBodyKeyDown(event) {
 
 function addEventListeners() {
   document.addEventListener('keydown', handleBodyKeyDown, false);
+  document.addEventListener('click', nextSlide);
 }
 
 /* Initialization */
 
 function addPrettify() {
   let els = document.querySelectorAll('pre');
-  for (var i = 0, el;
-    (el = els[i]); i++) {
+  for (var i = 0, el; (el = els[i]); i++) {
     if (!el.classList.contains('noprettyprint')) {
       el.classList.add('prettyprint');
     }
   }
-
-  var el = document.createElement('script');
-  el.type = 'text/javascript';
-  el.src = `${PERMANENT_URL_PREFIX}prettify.js`;
-  el.onload = function () {
-    // prettyPrint(); don't need it!
-  };
-  document.body.appendChild(el);
-}
-
-function addFontStyle() {
-  return; // NONONONON
-  let el = document.createElement('link');
-  el.rel = 'stylesheet';
-  el.type = 'text/css';
-  el.href =
-    'http://fonts.googleapis.com/css?family=' + 'Open+Sans:regular,semibold,italic,italicsemibold|Droid+Sans+Mono';
-
-  document.body.appendChild(el);
 }
 
 function addGeneralStyle() {
   var el = document.createElement('link');
   el.rel = 'stylesheet';
   el.type = 'text/css';
-  el.href = `${PERMANENT_URL_PREFIX  }styles.css`;
+  el.href = `${PERMANENT_URL_PREFIX}styles.css`;
   document.body.appendChild(el);
 
   var el = document.createElement('meta');
@@ -559,15 +554,13 @@ function addGeneralStyle() {
 }
 
 function makeBuildLists() {
-  for (var i = curSlide, slide;
-    (slide = slideEls[i]); i++) {
+  for (var i = curSlide, slide; (slide = slideEls[i]); i++) {
     let selector = '.build > *';
     if (slide.classList.contains('build')) {
-      selector += ':not(:first-child)'
+      selector += ':not(:first-child)';
     }
     let items = slide.querySelectorAll(selector);
-    for (var j = 0, item;
-      (item = items[j]); j++) {
+    for (var j = 0, item; (item = items[j]); j++) {
       if (item.classList) {
         item.classList.add('to-build');
       }
@@ -580,8 +573,6 @@ function handleDomLoaded() {
 
   setupFrames();
 
-  addFontStyle();
-  // addGeneralStyle(); do it myself
   addPrettify();
   addEventListeners();
 
@@ -615,7 +606,7 @@ if (!window._DEBUG && document.location.href.indexOf('?debug') !== -1) {
       // Avoid missing the DomContentLoaded event
       window['_DCL'] = true;
     },
-    false
+    false,
   );
 
   window._DEBUG = true;
@@ -630,3 +621,34 @@ if (!window._DEBUG && document.location.href.indexOf('?debug') !== -1) {
 } else {
   initialize();
 }
+
+const options = {
+  threshold: [0, 1.0],
+};
+
+const callback = (entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting && entry.target.parentElement.classList.contains('current')) {
+      entry.target.play();
+    } else {
+      entry.target.pause();
+    }
+  });
+};
+
+const observer = new IntersectionObserver(callback, options);
+
+const bgImages = document.querySelectorAll('img.bg');
+bgImages.forEach((bgImage) => {
+  bgImage.parentElement.style.backgroundImage = `url('${bgImage.src}')`;
+  bgImage.parentElement.classList.add('image');
+  if (bgImage.classList.contains('cover')) {
+    bgImage.parentElement.classList.add('cover');
+  }
+  bgImage.remove();
+});
+
+// get a list of all videos on the page
+const videos = document.querySelectorAll('video');
+// Observe each of those elements
+videos.forEach((video) => observer.observe(video));

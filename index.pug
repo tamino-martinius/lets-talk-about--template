@@ -3,16 +3,17 @@ html
   head
     title Lets talk about ... Template
     meta(charset="utf-8")
-    script(src="assets/vendor/slides.js")
     link(href="styles.styl"  rel="stylesheet" type="text/css")
   body
     section.slides.layout-regular.template-default
       article
         h1 H1
         h2 H2
-      article.image(data-src="assets/memes/philosoraptor.jpg")
+      article
+        img.bg(src="assets/memes/philosoraptor.jpg")
         h1 Background Image
-      article.image.cover(data-src="assets/memes/philosoraptor.jpg")
+      article
+        img.bg.cover(src="assets/memes/philosoraptor.jpg")
         h1 Cover Image
       article
         ul
@@ -52,4 +53,4 @@ html
       article
         video(src="#" loop controls)
 
-    script(src="assets/scripts/main.js")
+    script(src="main.js")

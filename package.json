@@ -5,8 +5,8 @@
   "author": "Tamino Martinius",
   "homepage": "https://github.com/tamino-martinius/lets-talk-about--template",
   "scripts": {
-    "start": "parcel index.pug assets",
-    "build": "parcel build --no-source-maps index.pug 'assets/**/*'",
+    "start": "parcel index.pug",
+    "build": "parcel build index.pug",
     "deploy": "git subtree push --prefix dist origin gh-pages"
   },
   "license": "MIT",
